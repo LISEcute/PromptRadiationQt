@@ -10,4 +10,4 @@ LibraryDebugConsole.*
 *.a
 *.lib
 *.autosave
-
+/zp/
