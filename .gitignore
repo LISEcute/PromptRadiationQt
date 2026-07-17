@@ -11,3 +11,4 @@ LibraryDebugConsole.*
 *.lib
 *.autosave
 /zp/
+/.qtcreator/
