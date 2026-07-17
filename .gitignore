@@ -1,0 +1,13 @@
+*.bak
+*.pdb
+*.user
+*.user*
+/build/
+/_symbols/
+/certs/
+/t/
+LibraryDebugConsole.*
+*.a
+*.lib
+*.autosave
+
