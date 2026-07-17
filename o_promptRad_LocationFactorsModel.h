@@ -2,7 +2,7 @@
 
 #include <QAbstractTableModel>
 
-#include "PromptRadiationDetailed.h"
+#include "o_promptRad_Detailed.h"
 
 class LocationFactorsModel : public QAbstractTableModel
 {

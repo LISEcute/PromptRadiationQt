@@ -1,4 +1,4 @@
-#include "LocationFactorsModel.h"
+#include "o_promptRad_LocationFactorsModel.h"
 
 #include <QLocale>
 
@@ -7,19 +7,19 @@ LocationFactorsModel::LocationFactorsModel(QObject* parent)
       m_factors(lise_prompt_rad::locationFactors())
 {
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 int LocationFactorsModel::rowCount(const QModelIndex& parent) const
 {
     return parent.isValid() ? 0 : lise_prompt_rad::kMonitorCount;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 int LocationFactorsModel::columnCount(const QModelIndex& parent) const
 {
     return parent.isValid() ? 0 : lise_prompt_rad::kLocationCount;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 QVariant LocationFactorsModel::data(const QModelIndex& index, int role) const
 {
@@ -44,7 +44,7 @@ QVariant LocationFactorsModel::data(const QModelIndex& index, int role) const
 
     return QVariant();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 QVariant LocationFactorsModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -64,7 +64,7 @@ QVariant LocationFactorsModel::headerData(int section, Qt::Orientation orientati
 
     return QVariant();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 Qt::ItemFlags LocationFactorsModel::flags(const QModelIndex& index) const
 {
@@ -74,7 +74,7 @@ Qt::ItemFlags LocationFactorsModel::flags(const QModelIndex& index) const
     }
     return f;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 bool LocationFactorsModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
@@ -96,13 +96,13 @@ bool LocationFactorsModel::setData(const QModelIndex& index, const QVariant& val
     emit dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole});
     return true;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 lise_prompt_rad::LocationFactorTable LocationFactorsModel::factors() const
 {
     return m_factors;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void LocationFactorsModel::setFactors(const lise_prompt_rad::LocationFactorTable& factors)
 {
@@ -110,4 +110,4 @@ void LocationFactorsModel::setFactors(const lise_prompt_rad::LocationFactorTable
     m_factors = factors;
     endResetModel();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

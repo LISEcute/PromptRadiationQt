@@ -1,4 +1,4 @@
-#include "PromptRadiationDetailed.h"
+#include "o_promptRad_Detailed.h"
 
 #include <algorithm>
 #include <cmath>
@@ -60,18 +60,19 @@ static const GlobalPromptRadiationSettings kDefaultGlobalSettings = {
 };
 
 static GlobalPromptRadiationSettings gGlobalSettings = kDefaultGlobalSettings;
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 const GlobalPromptRadiationSettings& defaultGlobalSettings()
 {
     return kDefaultGlobalSettings;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 const GlobalPromptRadiationSettings& globalSettings()
 {
     return gGlobalSettings;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 bool areGlobalSettingsValid(const GlobalPromptRadiationSettings& settings)
 {
@@ -86,55 +87,55 @@ bool areGlobalSettingsValid(const GlobalPromptRadiationSettings& settings)
                        settings.blockNameToCalculate.end(),
                        [](unsigned char ch) { return !std::isspace(ch); });
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void setGlobalSettings(const GlobalPromptRadiationSettings& settings)
 {
     gGlobalSettings = areGlobalSettingsValid(settings) ? settings : kDefaultGlobalSettings;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void resetGlobalSettingsToDefaults()
 {
     gGlobalSettings = kDefaultGlobalSettings;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 const LocationFactorTable& defaultLocationFactors()
 {
     return kDefaultLocationFactors;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 const LocationFactorTable& locationFactors()
 {
     return gLocationFactors;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void setLocationFactors(const LocationFactorTable& factors)
 {
     gLocationFactors = factors;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void resetLocationFactorsToDefaults()
 {
     gLocationFactors = kDefaultLocationFactors;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 const StopBoundaryTable& defaultStopLocationBoundaries()
 {
     return kDefaultStopLocationBoundaries;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 const StopBoundaryTable& stopLocationBoundaries()
 {
     return gStopLocationBoundaries;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 bool areStopLocationBoundariesValid(const StopBoundaryTable& boundaries)
 {
@@ -146,7 +147,7 @@ bool areStopLocationBoundariesValid(const StopBoundaryTable& boundaries)
     }
     return true;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void setStopLocationBoundaries(const StopBoundaryTable& boundaries)
 {
@@ -154,13 +155,13 @@ void setStopLocationBoundaries(const StopBoundaryTable& boundaries)
                               ? boundaries
                               : kDefaultStopLocationBoundaries;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void resetStopLocationBoundariesToDefaults()
 {
     gStopLocationBoundaries = kDefaultStopLocationBoundaries;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 static std::string lowerAscii(std::string s)
 {
@@ -169,7 +170,7 @@ static std::string lowerAscii(std::string s)
     });
     return s;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 static std::string trimAscii(const std::string& s)
 {
@@ -183,7 +184,7 @@ static std::string trimAscii(const std::string& s)
     }
     return s.substr(first, last - first);
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 double scaleFactorFromTemplate(int A, int Z, double energyMeVu)
 {
@@ -205,13 +206,13 @@ double scaleFactorFromTemplate(int A, int Z, double energyMeVu)
             std::pow(std::pow(48.0, 0.333), 2.0))
          * std::pow(a / 20.0, 0.333);
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 StopLocation locationFromDb0xExcel(double db0xMm, bool hasDb0x)
 {
     return locationFromDb0xExcel(db0xMm, hasDb0x, gStopLocationBoundaries);
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 StopLocation locationFromDb0xExcel(double db0xMm,
                                   bool hasDb0x,
@@ -235,7 +236,7 @@ StopLocation locationFromDb0xExcel(double db0xMm,
     if (db0xMm < b[5]) return StopLocation::P3;
     return StopLocation::P2;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 std::string stopLocationToString(StopLocation loc)
 {
@@ -248,7 +249,7 @@ std::string stopLocationToString(StopLocation loc)
     }
     return "P2";
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 bool stopLocationFromString(const std::string& text, StopLocation& loc)
 {
@@ -260,7 +261,7 @@ bool stopLocationFromString(const std::string& text, StopLocation& loc)
     if (s == "p5")    { loc = StopLocation::P5;   return true; }
     return false;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 bool findDb0xByFragment(const std::string& fragment,
                         const std::vector<TemplatePosition>& positions,
@@ -282,7 +283,7 @@ bool findDb0xByFragment(const std::string& fragment,
     }
     return false;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 double doseRateMremPerHour(double ratePps,
                            double scale,
@@ -304,7 +305,7 @@ double doseRateMremPerHour(double ratePps,
 
     return (ratePps / 1.0e8) * scale * factors[monitorIndex][locationIndex];
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 double doseRateMremPerHour(double ratePps,
                            double scale,
@@ -313,7 +314,7 @@ double doseRateMremPerHour(double ratePps,
 {
     return doseRateMremPerHour(ratePps, scale, location, monitorIndex, gLocationFactors);
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 static DetailedDoseRow calculateOneLiseRow(const LiseDetailedInput& input,
                                            const std::vector<TemplatePosition>& templatePositions)
@@ -330,7 +331,7 @@ static DetailedDoseRow calculateOneLiseRow(const LiseDetailedInput& input,
     }
     return out;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 static DetailedDoseRow calculateOneLowIonRow(const LowIonInput& input)
 {
@@ -354,7 +355,7 @@ static DetailedDoseRow calculateOneLowIonRow(const LowIonInput& input)
     }
     return out;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 DetailedDoseResult calculateDetailedTemplate(
     const std::vector<LiseDetailedInput>& liseRows,
@@ -394,7 +395,7 @@ DetailedDoseResult calculateDetailedTemplate(
 
     return result;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 std::vector<LowIonInput> defaultLowIonRowsFY2027()
 {
@@ -408,6 +409,6 @@ std::vector<LowIonInput> defaultLowIonRowsFY2027()
         {"He-3 low", 3, 2, 7.500e7, 214.63, StopLocation::P3}
     };
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 } // namespace lise_prompt_rad

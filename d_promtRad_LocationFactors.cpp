@@ -1,4 +1,4 @@
-#include "LocationFactorsDialog.h"
+#include "d_promtRad_LocationFactors.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -13,7 +13,7 @@
 #include <QTableView>
 #include <QVBoxLayout>
 
-LocationFactorsDialog::LocationFactorsDialog(QWidget* parent)
+T_PradiationLocationFactorsDlg::T_PradiationLocationFactorsDlg(QWidget* parent)
     : QDialog(parent),
       m_model(new LocationFactorsModel(this)),
       m_table(new QTableView(this)),
@@ -54,25 +54,25 @@ LocationFactorsDialog::LocationFactorsDialog(QWidget* parent)
 
     connect(m_buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(m_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
-    connect(resetButton, &QPushButton::clicked, this, &LocationFactorsDialog::resetToDefaults);
-    connect(copyButton, &QPushButton::clicked, this, &LocationFactorsDialog::copySelectionToClipboard);
-    connect(pasteButton, &QPushButton::clicked, this, &LocationFactorsDialog::pasteFromClipboard);
+    connect(resetButton, &QPushButton::clicked, this, &T_PradiationLocationFactorsDlg::resetToDefaults);
+    connect(copyButton, &QPushButton::clicked, this, &T_PradiationLocationFactorsDlg::copySelectionToClipboard);
+    connect(pasteButton, &QPushButton::clicked, this, &T_PradiationLocationFactorsDlg::pasteFromClipboard);
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-void LocationFactorsDialog::setFactors(const lise_prompt_rad::LocationFactorTable& factors)
+void T_PradiationLocationFactorsDlg::setFactors(const lise_prompt_rad::LocationFactorTable& factors)
 {
     m_model->setFactors(factors);
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-lise_prompt_rad::LocationFactorTable LocationFactorsDialog::factors() const
+lise_prompt_rad::LocationFactorTable T_PradiationLocationFactorsDlg::factors() const
 {
     return m_model->factors();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-void LocationFactorsDialog::resetToDefaults()
+void T_PradiationLocationFactorsDlg::resetToDefaults()
 {
     const int answer = QMessageBox::question(
         this,
@@ -83,9 +83,9 @@ void LocationFactorsDialog::resetToDefaults()
         m_model->setFactors(lise_prompt_rad::defaultLocationFactors());
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-void LocationFactorsDialog::copySelectionToClipboard() const
+void T_PradiationLocationFactorsDlg::copySelectionToClipboard() const
 {
     const QModelIndexList selected = m_table->selectionModel()->selectedIndexes();
     if (selected.isEmpty()) {
@@ -118,9 +118,9 @@ void LocationFactorsDialog::copySelectionToClipboard() const
 
     QApplication::clipboard()->setText(text);
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-void LocationFactorsDialog::pasteFromClipboard()
+void T_PradiationLocationFactorsDlg::pasteFromClipboard()
 {
     const QString text = QApplication::clipboard()->text();
     if (text.trimmed().isEmpty()) {
@@ -146,4 +146,4 @@ void LocationFactorsDialog::pasteFromClipboard()
         }
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

@@ -1,4 +1,4 @@
-#include "GlobalSettingsDialog.h"
+#include "d_promtRad_GlobalSettings.h"
 
 #include <QDialogButtonBox>
 #include <QHeaderView>
@@ -27,7 +27,7 @@ enum GlobalSettingRow {
     RowRateCutoff,
     RowCount
 };
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 const char* settingLabel(int row)
 {
@@ -43,7 +43,7 @@ const char* settingLabel(int row)
     default:                      return "";
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 const char* settingDescription(int row)
 {
@@ -68,13 +68,13 @@ const char* settingDescription(int row)
         return "";
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 QString numberText(double value)
 {
     return QLocale::c().toString(value, 'g', 12);
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 bool readDoubleCell(const QTableWidget* table,
                     int row,
@@ -92,11 +92,11 @@ bool readDoubleCell(const QTableWidget* table,
     }
     return true;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 } // namespace
 
-GlobalSettingsDialog::GlobalSettingsDialog(QWidget* parent)
+T_PradiationGlobalSettingsDlg::T_PradiationGlobalSettingsDlg(QWidget* parent)
     : QDialog(parent),
       m_settings(lise_prompt_rad::globalSettings()),
       m_table(new QTableWidget(RowCount, 3, this)),
@@ -138,28 +138,28 @@ GlobalSettingsDialog::GlobalSettingsDialog(QWidget* parent)
 
     fillTable();
 
-    connect(m_buttons, &QDialogButtonBox::accepted, this, &GlobalSettingsDialog::accept);
+    connect(m_buttons, &QDialogButtonBox::accepted, this, &T_PradiationGlobalSettingsDlg::accept);
     connect(m_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
-    connect(resetButton, &QPushButton::clicked, this, &GlobalSettingsDialog::resetToDefaults);
+    connect(resetButton, &QPushButton::clicked, this, &T_PradiationGlobalSettingsDlg::resetToDefaults);
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-void GlobalSettingsDialog::setSettings(const lise_prompt_rad::GlobalPromptRadiationSettings& settings)
+void T_PradiationGlobalSettingsDlg::setSettings(const lise_prompt_rad::GlobalPromptRadiationSettings& settings)
 {
     m_settings = lise_prompt_rad::areGlobalSettingsValid(settings)
                  ? settings
                  : lise_prompt_rad::defaultGlobalSettings();
     fillTable();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-lise_prompt_rad::GlobalPromptRadiationSettings GlobalSettingsDialog::settings() const
+lise_prompt_rad::GlobalPromptRadiationSettings T_PradiationGlobalSettingsDlg::settings() const
 {
     return m_settings;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-void GlobalSettingsDialog::fillTable()
+void T_PradiationGlobalSettingsDlg::fillTable()
 {
     for (int r = 0; r < RowCount; ++r) {
         auto* labelItem = new QTableWidgetItem(QString::fromLatin1(settingLabel(r)));
@@ -190,9 +190,9 @@ void GlobalSettingsDialog::fillTable()
         m_table->setItem(r, 2, commentItem);
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-bool GlobalSettingsDialog::readSettings(lise_prompt_rad::GlobalPromptRadiationSettings& out,
+bool T_PradiationGlobalSettingsDlg::readSettings(lise_prompt_rad::GlobalPromptRadiationSettings& out,
                                         QString* errorMessage) const
 {
     if (!readDoubleCell(m_table, RowScaleModelFactor, out.scaleModelFactor, errorMessage)) return false;
@@ -222,9 +222,9 @@ bool GlobalSettingsDialog::readSettings(lise_prompt_rad::GlobalPromptRadiationSe
 
     return true;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-void GlobalSettingsDialog::accept()
+void T_PradiationGlobalSettingsDlg::accept()
 {
     lise_prompt_rad::GlobalPromptRadiationSettings newSettings;
     QString errorMessage;
@@ -236,9 +236,9 @@ void GlobalSettingsDialog::accept()
     m_settings = newSettings;
     QDialog::accept();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-void GlobalSettingsDialog::resetToDefaults()
+void T_PradiationGlobalSettingsDlg::resetToDefaults()
 {
     const int answer = QMessageBox::question(
         this,
@@ -250,4 +250,4 @@ void GlobalSettingsDialog::resetToDefaults()
         fillTable();
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

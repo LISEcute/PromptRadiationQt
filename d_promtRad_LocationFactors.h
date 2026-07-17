@@ -2,17 +2,17 @@
 
 #include <QDialog>
 
-#include "LocationFactorsModel.h"
+#include "o_promptRad_LocationFactorsModel.h"
 
 class QDialogButtonBox;
 class QTableView;
 
-class LocationFactorsDialog : public QDialog
+class T_PradiationLocationFactorsDlg : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit LocationFactorsDialog(QWidget* parent = nullptr);
+    explicit T_PradiationLocationFactorsDlg(QWidget* parent = nullptr);
 
     void setFactors(const lise_prompt_rad::LocationFactorTable& factors);
     lise_prompt_rad::LocationFactorTable factors() const;

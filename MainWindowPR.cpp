@@ -1,51 +1,37 @@
-#include "MainWindow.h"
+#include "MainWindowPR.h"
 
-#include "GlobalSettingsDialog.h"
-#include "LocationFactorsDialog.h"
-#include "StopBoundariesDialog.h"
-#include "PromptRadiationDetailed.h"
+#include "d_promtRad_GlobalSettings.h"
+#include "d_promtRad_LocationFactors.h"
+#include "d_promtRad_StopBoundaries.h"
+#include "o_promptRad_Detailed.h"
+#include "o_promptRad_UiHelpers.h"
 
 #include <QAction>
 #include <QCoreApplication>
 #include <QDir>
+#include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFont>
 #include <QIcon>
 #include <QMenu>
 #include <QMenuBar>
+#include <QObject>
 #include <QSettings>
+#include <QStringList>
 #include <QTextEdit>
+#include <QTextStream>
 
-namespace {
+#include <algorithm>
+#include <vector>
 
-QString locationFactorKey(int monitorIndex, int locationIndex)
-{
-    QString location = QString::fromLatin1(lise_prompt_rad::kLocationNames[locationIndex]);
-    location.replace(QLatin1Char('/'), QString()); // P2/P3 -> P2P3, easier to edit in INI
-
-    return QString::fromLatin1("%1_%2")
-        .arg(QString::fromLatin1(lise_prompt_rad::kMonitorNames[monitorIndex]), location);
-}
-//--------------------------------------------------------------------------------
-
-QString legacyLocationFactorKey(int monitorIndex, int locationIndex)
-{
-    // Older test version used '/' in the key. Keep this reader so existing INI files still work.
-    return QString::fromLatin1("%1/%2")
-        .arg(QString::fromLatin1(lise_prompt_rad::kMonitorNames[monitorIndex]),
-             QString::fromLatin1(lise_prompt_rad::kLocationNames[locationIndex]));
-}
-//--------------------------------------------------------------------------------
-
-} // namespace
-
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
       m_log(new QTextEdit(this)),
       m_settingsFilePath(defaultSettingsFilePath())
 {
-    setWindowTitle(tr("LISE++ Prompt Radiation Qt Example"));
+    setWindowTitle(tr("ARIS Prompt Radiation Utility"));
     setWindowIcon(QIcon(QStringLiteral(":/Icons/lisepp_small.png")));
     resize(950, 620);
 
@@ -65,7 +51,7 @@ MainWindow::MainWindow(QWidget* parent)
     printLocationFactorSummary();
     printStopBoundarySummary();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::createMenus()
 {
@@ -85,34 +71,47 @@ void MainWindow::createMenus()
     QAction* quitAction = fileMenu->addAction(QIcon(QStringLiteral(":/Icons/quit.png")), tr("Quit"));
     connect(quitAction, &QAction::triggered, this, &QWidget::close);
 
+    //**************************************************************************
     // These are the actions you can move into the existing LISE++ menu.
-    QMenu* calcMenu = menuBar()->addMenu(tr("&Calculations"));
+    QMenu* calcOptions = menuBar()->addMenu(tr("&Options"));
 
-    QAction* editGlobalSettingsAction = calcMenu->addAction(tr("Prompt radiation: edit global settings..."));
+    QAction* editGlobalSettingsAction = calcOptions->addAction(tr("Edit global settings..."));
     connect(editGlobalSettingsAction, &QAction::triggered, this, &MainWindow::editGlobalSettings);
 
-    QAction* editFactorsAction = calcMenu->addAction(tr("Prompt radiation: edit location factors..."));
+    QAction* editFactorsAction = calcOptions->addAction(tr("Edit location factors..."));
     connect(editFactorsAction, &QAction::triggered, this, &MainWindow::editLocationFactors);
 
-    QAction* editBoundariesAction = calcMenu->addAction(tr("Prompt radiation: edit DB0.x stopping boundaries..."));
+    QAction* editBoundariesAction = calcOptions->addAction(tr("Edit DB0.x stopping boundaries..."));
     connect(editBoundariesAction, &QAction::triggered, this, &MainWindow::editStopLocationBoundaries);
 
-    QAction* runExampleAction = calcMenu->addAction(QIcon(QStringLiteral(":/Icons/trans.gif")),
-                                                    tr("Prompt radiation: run small example"));
-    connect(runExampleAction, &QAction::triggered, this, &MainWindow::runSmallExample);
 
-    calcMenu->addSeparator();
+    calcOptions->addSeparator();
 
-    QAction* resetGlobalSettingsAction = calcMenu->addAction(tr("Prompt radiation: reset global settings"));
+    QAction* resetGlobalSettingsAction = calcOptions->addAction(tr("Reset global settings"));
     connect(resetGlobalSettingsAction, &QAction::triggered, this, &MainWindow::resetGlobalSettings);
 
-    QAction* resetFactorsAction = calcMenu->addAction(tr("Prompt radiation: reset location factors"));
+    QAction* resetFactorsAction = calcOptions->addAction(tr("Reset location factors"));
     connect(resetFactorsAction, &QAction::triggered, this, &MainWindow::resetLocationFactors);
 
-    QAction* resetBoundariesAction = calcMenu->addAction(tr("Prompt radiation: reset DB0.x stopping boundaries"));
+    QAction* resetBoundariesAction = calcOptions->addAction(tr("Reset DB0.x stopping boundaries"));
     connect(resetBoundariesAction, &QAction::triggered, this, &MainWindow::resetStopLocationBoundaries);
+
+    //**************************************************************************
+
+    QMenu* calcMenu = menuBar()->addMenu(tr("&Calculations"));
+
+
+
+    QAction* readFilesAndRunAction = calcMenu->addAction(QIcon(QStringLiteral(":/Icons/trans.gif")),
+                                                         tr("Read example Yield and Position files and RUN"));
+    connect(readFilesAndRunAction, &QAction::triggered, this, &MainWindow::readInputFilesAndRun);
+
+    QAction* runExampleAction = calcMenu->addAction(QIcon(QStringLiteral(":/Icons/trans.gif")),
+                                                    tr("Run small example"));
+    connect(runExampleAction, &QAction::triggered, this, &MainWindow::runSmallExample);
+
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 QString MainWindow::defaultSettingsFilePath() const
 {
@@ -120,13 +119,13 @@ QString MainWindow::defaultSettingsFilePath() const
     // change only this path if you prefer the existing LISE++ settings directory.
     return QDir(QCoreApplication::applicationDirPath()).filePath(QStringLiteral("PromptRadiation.ini"));
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 QString MainWindow::settingsFilePath() const
 {
     return m_settingsFilePath.isEmpty() ? defaultSettingsFilePath() : m_settingsFilePath;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::loadSettingsFromIniFile()
 {
@@ -149,7 +148,7 @@ void MainWindow::loadSettingsFromIniFile()
     printLocationFactorSummary();
     printStopBoundarySummary();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::saveSettingsAsIniFile()
 {
@@ -173,7 +172,7 @@ void MainWindow::saveSettingsAsIniFile()
     m_log->append(tr("\nPrompt-radiation settings saved to selected INI:\n  %1")
                   .arg(settingsFilePath()));
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::useDefaultIniFile()
 {
@@ -186,11 +185,11 @@ void MainWindow::useDefaultIniFile()
     printLocationFactorSummary();
     printStopBoundarySummary();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::editGlobalSettings()
 {
-    GlobalSettingsDialog dlg(this);
+    T_PradiationGlobalSettingsDlg dlg(this);
     dlg.setSettings(lise_prompt_rad::globalSettings());
 
     if (dlg.exec() == QDialog::Accepted) {
@@ -201,11 +200,11 @@ void MainWindow::editGlobalSettings()
         printGlobalSettingsSummary();
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::editLocationFactors()
 {
-    LocationFactorsDialog dlg(this);
+    T_PradiationLocationFactorsDlg dlg(this);
     dlg.setFactors(lise_prompt_rad::locationFactors());
 
     if (dlg.exec() == QDialog::Accepted) {
@@ -216,11 +215,11 @@ void MainWindow::editLocationFactors()
         printLocationFactorSummary();
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::editStopLocationBoundaries()
 {
-    StopBoundariesDialog dlg(this);
+    T_PradiationStopBoundariesDlg dlg(this);
     dlg.setBoundaries(lise_prompt_rad::stopLocationBoundaries());
 
     if (dlg.exec() == QDialog::Accepted) {
@@ -231,7 +230,7 @@ void MainWindow::editStopLocationBoundaries()
         printStopBoundarySummary();
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::resetGlobalSettings()
 {
@@ -241,7 +240,7 @@ void MainWindow::resetGlobalSettings()
                   .arg(settingsFilePath()));
     printGlobalSettingsSummary();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::resetLocationFactors()
 {
@@ -251,7 +250,7 @@ void MainWindow::resetLocationFactors()
                   .arg(settingsFilePath()));
     printLocationFactorSummary();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::resetStopLocationBoundaries()
 {
@@ -261,7 +260,7 @@ void MainWindow::resetStopLocationBoundaries()
                   .arg(settingsFilePath()));
     printStopBoundarySummary();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::runSmallExample()
 {
@@ -294,7 +293,49 @@ void MainWindow::runSmallExample()
                       .arg(result.totalsMremPerHr[i], 0, 'g', 8));
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+
+void MainWindow::readInputFilesAndRun()
+{
+    using namespace lise_prompt_rad;
+
+    const QString yieldsPath = prompt_rad_ui::findDefaultInputFile(QStringLiteral("PromtRadiation_InputYields.txt"));
+    const QString positionsPath = prompt_rad_ui::findDefaultInputFile(QStringLiteral("PromtRadiation_InputPositions.txt"));
+
+    QStringList messages;
+    const std::vector<LiseDetailedInput> liseRows = prompt_rad_ui::readYieldInputFile(yieldsPath, messages);
+    const std::vector<TemplatePosition> positions = prompt_rad_ui::readPositionInputFile(positionsPath, messages);
+
+    m_log->append(tr("\nPrompt-radiation calculation from text input files:"));
+    m_log->append(tr("  Yields file    : %1").arg(yieldsPath));
+    m_log->append(tr("  Positions file : %1").arg(positionsPath));
+    for (const QString& message : messages) {
+        m_log->append(QStringLiteral("  ") + message);
+    }
+
+    if (liseRows.empty() || positions.empty()) {
+        m_log->append(tr("  Calculation stopped: one or both input files did not provide usable rows."));
+        return;
+    }
+
+    const DetailedDoseResult result = calculateDetailedTemplate(
+        liseRows,
+        positions,
+        defaultLowIonRowsFY2027(),
+        globalSettings().rateCutoffPps);
+
+    m_log->append(QString::fromLatin1("  Rate cutoff    : %1 pps")
+                  .arg(globalSettings().rateCutoffPps, 0, 'g', 8));
+    m_log->append(QString::fromLatin1("  Rows after cutoff: %1 detailed + %2 low-ion")
+                  .arg(static_cast<int>(result.rows.size()))
+                  .arg(static_cast<int>(result.lowIonRows.size())));
+
+    m_log->append(tr("\nMonitor totals:"));
+    prompt_rad_ui::appendMonitorTotals(m_log, result);
+    prompt_rad_ui::appendTopContributors(m_log, result);
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::loadPromptRadiationSettings()
 {
@@ -303,13 +344,13 @@ void MainWindow::loadPromptRadiationSettings()
     // Create/update the INI on first run so the user can edit it by hand if needed.
     savePromptRadiationSettings();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::savePromptRadiationSettings() const
 {
     savePromptRadiationSettingsToFile(settingsFilePath());
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::loadPromptRadiationSettingsFromFile(const QString& filePath)
 {
@@ -334,8 +375,8 @@ void MainWindow::loadPromptRadiationSettingsFromFile(const QString& filePath)
     settings.beginGroup("LocationFactors");
     for (int r = 0; r < lise_prompt_rad::kMonitorCount; ++r) {
         for (int c = 0; c < lise_prompt_rad::kLocationCount; ++c) {
-            const QString key = locationFactorKey(r, c);
-            const QString legacyKey = legacyLocationFactorKey(r, c);
+            const QString key = prompt_rad_ui::locationFactorKey(r, c);
+            const QString legacyKey = prompt_rad_ui::legacyLocationFactorKey(r, c);
             factors[r][c] = settings.value(key, settings.value(legacyKey, factors[r][c])).toDouble();
         }
     }
@@ -351,7 +392,7 @@ void MainWindow::loadPromptRadiationSettingsFromFile(const QString& filePath)
     settings.endGroup();
     lise_prompt_rad::setStopLocationBoundaries(boundaries);
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::savePromptRadiationSettingsToFile(const QString& filePath) const
 {
@@ -376,7 +417,7 @@ void MainWindow::savePromptRadiationSettingsToFile(const QString& filePath) cons
     const auto& factors = lise_prompt_rad::locationFactors();
     for (int r = 0; r < lise_prompt_rad::kMonitorCount; ++r) {
         for (int c = 0; c < lise_prompt_rad::kLocationCount; ++c) {
-            settings.setValue(locationFactorKey(r, c), factors[r][c]);
+            settings.setValue(prompt_rad_ui::locationFactorKey(r, c), factors[r][c]);
         }
     }
     settings.endGroup();
@@ -392,7 +433,7 @@ void MainWindow::savePromptRadiationSettingsToFile(const QString& filePath) cons
 
     settings.sync();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::printGlobalSettingsSummary()
 {
@@ -408,7 +449,7 @@ void MainWindow::printGlobalSettingsSummary()
     m_log->append(QString::fromLatin1("  Block name           = %1").arg(QString::fromStdString(g.blockNameToCalculate)));
     m_log->append(QString::fromLatin1("  Rate cutoff          = %1 pps").arg(g.rateCutoffPps, 0, 'g', 12));
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::printLocationFactorSummary()
 {
@@ -421,27 +462,19 @@ void MainWindow::printLocationFactorSummary()
                       .arg(f[0][c], 0, 'g', 12));
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 void MainWindow::printStopBoundarySummary()
 {
     const auto& b = lise_prompt_rad::stopLocationBoundaries();
 
-    const auto signedNumber = [](double value) -> QString {
-        QString s = QString::number(value, 'g', 12);
-
-        if (value > 0.0)  s.prepend(QLatin1Char('+'));
-
-        return s;
-    };
-
     m_log->append(tr("\nActive DB0.x stopping boundaries [mm]:"));
-    m_log->append(QString::fromLatin1("  x < %1  -> P2").arg(signedNumber(b[0])));
-    m_log->append(QString::fromLatin1("  x < %1  -> P3").arg(signedNumber(b[1])));
-    m_log->append(QString::fromLatin1("  x < %1  -> P4").arg(signedNumber(b[2])));
-    m_log->append(QString::fromLatin1("  x < %1  -> P5").arg(signedNumber(b[3])));
-    m_log->append(QString::fromLatin1("  x < %1  -> P4").arg(signedNumber(b[4])));
-    m_log->append(QString::fromLatin1("  x < %1  -> P3").arg(signedNumber(b[5])));
-    m_log->append(QStringLiteral("  else       -> P2"));
+    m_log->append(QString::fromLatin1("  x < %1  -> P2").arg(prompt_rad_ui::signedNumber(b[0])));
+    m_log->append(QString::fromLatin1("  x < %1  -> P3").arg(prompt_rad_ui::signedNumber(b[1])));
+    m_log->append(QString::fromLatin1("  x < %1  -> P4").arg(prompt_rad_ui::signedNumber(b[2])));
+    m_log->append(QString::fromLatin1("  x < %1  -> P5").arg(prompt_rad_ui::signedNumber(b[3])));
+    m_log->append(QString::fromLatin1("  x < %1  -> P4").arg(prompt_rad_ui::signedNumber(b[4])));
+    m_log->append(QString::fromLatin1("  x < %1  -> P3").arg(prompt_rad_ui::signedNumber(b[5])));
+    m_log->append(QStringLiteral("  else      -> P2"));
 }
-//--------------------------------------------------------------------------------//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

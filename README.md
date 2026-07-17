@@ -17,10 +17,31 @@ Standalone Qt Widgets example for the LISE++ prompt-radiation detailed-template 
   - `Calculations / Prompt radiation: edit location factors...`
   - `Prompt radiation: edit DB0.x stopping boundaries...`
   - `Prompt radiation: run small example`
+  - `Prompt radiation: read these files and run`
   - `Prompt radiation: reset global settings`
   - `Prompt radiation: reset location factors`
   - `Prompt radiation: reset DB0.x stopping boundaries`
 
+
+
+## Text input files from Excel
+
+Two tab-delimited text files are included, copied from `PromptRadiationTemplate_Expanded_FY2027.xlsx`:
+
+```text
+PromtRadiation_InputYields.txt     <- sheet "Template Detailed", B4:G100
+PromtRadiation_InputPositions.txt  <- sheet "TemplatePositions", B4:G100
+```
+
+The menu command
+
+```text
+Calculations / Prompt radiation: read these files and run
+```
+
+searches for these files next to the executable, in the current working directory, and in the project source directory. It reads the yield rows, reads DB0.x positions, applies the current INI settings, runs `calculateDetailedTemplate(...)`, and prints monitor totals plus the main N0318 contributors.
+
+The filenames intentionally use `PromtRadiation_...` to match the requested names.
 
 ## Global settings
 

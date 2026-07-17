@@ -1,4 +1,4 @@
-#include "StopBoundariesDialog.h"
+#include "d_promtRad_StopBoundaries.h"
 
 #include <QDialogButtonBox>
 #include <QHeaderView>
@@ -26,11 +26,11 @@ const char* resultLocationNameForBoundaryRow(int row)
     default: return "P2";
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 } // namespace
 
-StopBoundariesDialog::StopBoundariesDialog(QWidget* parent)
+T_PradiationStopBoundariesDlg::T_PradiationStopBoundariesDlg(QWidget* parent)
     : QDialog(parent),
       m_boundaries(lise_prompt_rad::stopLocationBoundaries()),
       m_table(new QTableWidget(lise_prompt_rad::kStopBoundaryCount, 3, this)),
@@ -72,28 +72,28 @@ StopBoundariesDialog::StopBoundariesDialog(QWidget* parent)
 
     fillTable();
 
-    connect(m_buttons, &QDialogButtonBox::accepted, this, &StopBoundariesDialog::accept);
+    connect(m_buttons, &QDialogButtonBox::accepted, this, &T_PradiationStopBoundariesDlg::accept);
     connect(m_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
-    connect(resetButton, &QPushButton::clicked, this, &StopBoundariesDialog::resetToDefaults);
+    connect(resetButton, &QPushButton::clicked, this, &T_PradiationStopBoundariesDlg::resetToDefaults);
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-void StopBoundariesDialog::setBoundaries(const lise_prompt_rad::StopBoundaryTable& boundaries)
+void T_PradiationStopBoundariesDlg::setBoundaries(const lise_prompt_rad::StopBoundaryTable& boundaries)
 {
     m_boundaries = lise_prompt_rad::areStopLocationBoundariesValid(boundaries)
                    ? boundaries
                    : lise_prompt_rad::defaultStopLocationBoundaries();
     fillTable();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-lise_prompt_rad::StopBoundaryTable StopBoundariesDialog::boundaries() const
+lise_prompt_rad::StopBoundaryTable T_PradiationStopBoundariesDlg::boundaries() const
 {
     return m_boundaries;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-void StopBoundariesDialog::fillTable()
+void T_PradiationStopBoundariesDlg::fillTable()
 {
     for (int r = 0; r < lise_prompt_rad::kStopBoundaryCount; ++r) {
         auto* ruleItem = new QTableWidgetItem(QString::fromLatin1(lise_prompt_rad::kStopBoundaryNames[r]));
@@ -110,9 +110,9 @@ void StopBoundariesDialog::fillTable()
         m_table->setItem(r, 2, locationItem);
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-bool StopBoundariesDialog::readBoundaries(lise_prompt_rad::StopBoundaryTable& out,
+bool T_PradiationStopBoundariesDlg::readBoundaries(lise_prompt_rad::StopBoundaryTable& out,
                                           QString* errorMessage) const
 {
     for (int r = 0; r < lise_prompt_rad::kStopBoundaryCount; ++r) {
@@ -137,9 +137,9 @@ bool StopBoundariesDialog::readBoundaries(lise_prompt_rad::StopBoundaryTable& ou
 
     return true;
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-void StopBoundariesDialog::accept()
+void T_PradiationStopBoundariesDlg::accept()
 {
     lise_prompt_rad::StopBoundaryTable table{};
     QString errorMessage;
@@ -151,9 +151,9 @@ void StopBoundariesDialog::accept()
     m_boundaries = table;
     QDialog::accept();
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-void StopBoundariesDialog::resetToDefaults()
+void T_PradiationStopBoundariesDlg::resetToDefaults()
 {
     const int answer = QMessageBox::question(
         this,
@@ -165,4 +165,4 @@ void StopBoundariesDialog::resetToDefaults()
         fillTable();
     }
 }
-//--------------------------------------------------------------------------------
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

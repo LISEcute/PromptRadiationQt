@@ -2,17 +2,17 @@
 
 #include <QDialog>
 
-#include "PromptRadiationDetailed.h"
+#include "o_promptRad_Detailed.h"
 
 class QDialogButtonBox;
 class QTableWidget;
 
-class StopBoundariesDialog : public QDialog
+class T_PradiationStopBoundariesDlg : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit StopBoundariesDialog(QWidget* parent = nullptr);
+    explicit T_PradiationStopBoundariesDlg(QWidget* parent = nullptr);
 
     void setBoundaries(const lise_prompt_rad::StopBoundaryTable& boundaries);
     lise_prompt_rad::StopBoundaryTable boundaries() const;

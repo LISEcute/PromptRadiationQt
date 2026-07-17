@@ -21,6 +21,7 @@ private slots:
     void editLocationFactors();
     void editStopLocationBoundaries();
     void runSmallExample();
+    void readInputFilesAndRun();
     void resetGlobalSettings();
     void resetLocationFactors();
     void resetStopLocationBoundaries();

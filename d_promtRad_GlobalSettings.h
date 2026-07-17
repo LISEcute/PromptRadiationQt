@@ -1,18 +1,18 @@
 #pragma once
 
-#include "PromptRadiationDetailed.h"
+#include "o_promptRad_Detailed.h"
 
 #include <QDialog>
 
 class QDialogButtonBox;
 class QTableWidget;
 
-class GlobalSettingsDialog : public QDialog
+class T_PradiationGlobalSettingsDlg : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit GlobalSettingsDialog(QWidget* parent = nullptr);
+    explicit T_PradiationGlobalSettingsDlg(QWidget* parent = nullptr);
 
     void setSettings(const lise_prompt_rad::GlobalPromptRadiationSettings& settings);
     lise_prompt_rad::GlobalPromptRadiationSettings settings() const;
