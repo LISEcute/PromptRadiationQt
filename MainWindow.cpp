@@ -427,13 +427,21 @@ void MainWindow::printStopBoundarySummary()
 {
     const auto& b = lise_prompt_rad::stopLocationBoundaries();
 
+    const auto signedNumber = [](double value) -> QString {
+        QString s = QString::number(value, 'g', 12);
+
+        if (value > 0.0)  s.prepend(QLatin1Char('+'));
+
+        return s;
+    };
+
     m_log->append(tr("\nActive DB0.x stopping boundaries [mm]:"));
-    m_log->append(QString::fromLatin1("  x < %1  -> P2").arg(b[0], 0, 'g', 12));
-    m_log->append(QString::fromLatin1("  x < %1  -> P3").arg(b[1], 0, 'g', 12));
-    m_log->append(QString::fromLatin1("  x < %1  -> P4").arg(b[2], 0, 'g', 12));
-    m_log->append(QString::fromLatin1("  x < %1  -> P5").arg(b[3], 0, 'g', 12));
-    m_log->append(QString::fromLatin1("  x < %1  -> P4").arg(b[4], 0, 'g', 12));
-    m_log->append(QString::fromLatin1("  x < %1  -> P3").arg(b[5], 0, 'g', 12));
+    m_log->append(QString::fromLatin1("  x < %1  -> P2").arg(signedNumber(b[0])));
+    m_log->append(QString::fromLatin1("  x < %1  -> P3").arg(signedNumber(b[1])));
+    m_log->append(QString::fromLatin1("  x < %1  -> P4").arg(signedNumber(b[2])));
+    m_log->append(QString::fromLatin1("  x < %1  -> P5").arg(signedNumber(b[3])));
+    m_log->append(QString::fromLatin1("  x < %1  -> P4").arg(signedNumber(b[4])));
+    m_log->append(QString::fromLatin1("  x < %1  -> P3").arg(signedNumber(b[5])));
     m_log->append(QStringLiteral("  else       -> P2"));
 }
-//--------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------//--------------------------------------------------------------------------------
