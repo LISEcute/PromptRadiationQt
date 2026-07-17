@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icons/sign_ok.png</file>
+        <file>Icons/copy.png</file>
+        <file>Icons/paste1.png</file>
+        <file>Icons/cancel.png</file>
+        <file>Icons/quit.png</file>
+        <file>Icons/trans.gif</file>
+        <file>Icons/lisepp_small.png</file>
+    </qresource>
+</RCC>

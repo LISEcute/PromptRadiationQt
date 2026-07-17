@@ -1,0 +1,13 @@
+debug/main.o
+debug/MainWindow.o
+debug/GlobalSettingsDialog.o
+debug/LocationFactorsDialog.o
+debug/LocationFactorsModel.o
+debug/StopBoundariesDialog.o
+debug/PromptRadiationDetailed.o
+debug/qrc_PromptRadiationResources.o
+debug/moc_MainWindow.o
+debug/moc_GlobalSettingsDialog.o
+debug/moc_LocationFactorsDialog.o
+debug/moc_LocationFactorsModel.o
+debug/moc_StopBoundariesDialog.o
