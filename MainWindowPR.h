@@ -17,6 +17,7 @@ private slots:
     void loadSettingsFromIniFile();
     void saveSettingsAsIniFile();
     void useDefaultIniFile();
+    void showMonitorLocations();
     void editGlobalSettings();
     void editLocationFactors();
     void editStopLocationBoundaries();

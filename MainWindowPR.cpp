@@ -2,6 +2,7 @@
 
 #include "d_promtRad_GlobalSettings.h"
 #include "d_promtRad_LocationFactors.h"
+#include "d_promtRad_MonitorLocations.h"
 #include "d_promtRad_StopBoundaries.h"
 #include "o_promptRad_Detailed.h"
 #include "o_promptRad_UiHelpers.h"
@@ -21,7 +22,6 @@
 #include <QStringList>
 #include <QTextEdit>
 #include <QTextStream>
-#include <QScrollBar>
 
 #include <algorithm>
 #include <vector>
@@ -66,6 +66,11 @@ void MainWindow::createMenus()
 
     QAction* useDefaultIniAction = fileMenu->addAction(tr("Prompt radiation: use default INI"));
     connect(useDefaultIniAction, &QAction::triggered, this, &MainWindow::useDefaultIniFile);
+
+    fileMenu->addSeparator();
+
+    QAction* monitorLocationsAction = fileMenu->addAction(tr("Monitors location table"));
+    connect(monitorLocationsAction, &QAction::triggered, this, &MainWindow::showMonitorLocations);
 
     fileMenu->addSeparator();
 
@@ -188,6 +193,13 @@ void MainWindow::useDefaultIniFile()
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
+void MainWindow::showMonitorLocations()
+{
+    T_PradiationMonitorLocationsDlg dlg(this);
+    dlg.exec();
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
 void MainWindow::editGlobalSettings()
 {
     T_PradiationGlobalSettingsDlg dlg(this);
@@ -293,8 +305,6 @@ void MainWindow::runSmallExample()
                       .arg(QString::fromLatin1(kMonitorNames[i]), -7)
                       .arg(result.totalsMremPerHr[i], 0, 'g', 8));
     }
-
-    m_log->verticalScrollBar()->setValue(m_log->verticalScrollBar()->maximum());
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
@@ -337,8 +347,6 @@ void MainWindow::readInputFilesAndRun()
     m_log->append(tr("\nMonitor totals:"));
     prompt_rad_ui::appendMonitorTotals(m_log, result);
     prompt_rad_ui::appendTopContributors(m_log, result);
-
-    m_log->verticalScrollBar()->setValue(m_log->verticalScrollBar()->maximum());
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
@@ -464,7 +472,7 @@ void MainWindow::printLocationFactorSummary()
     for (int c = 0; c < lise_prompt_rad::kLocationCount; ++c) {
         m_log->append(QString::fromLatin1("  %1 = %2")
                       .arg(QString::fromLatin1(lise_prompt_rad::kLocationNames[c]), -5)
-                      .arg(f[0][c], 0, 'g', 9));
+                      .arg(f[0][c], 0, 'g', 12));
     }
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

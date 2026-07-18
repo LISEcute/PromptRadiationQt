@@ -18,11 +18,21 @@ win32-msvc {
 
 DEFINES += PROMPT_RADIATION_SOURCE_DIR=\\\"$$PWD\\\"
 
+win32:VERSION = 1.2.0.0 # major.minor.patch.build
+else:VERSION  = 1.2.0   # major.minor.patch
+VERSION_STR = $$section(VERSION, ., 0, 2)
+
+win32 {
+    QMAKE_TARGET_COPYRIGHT = "LISE group at FRIB/MSU"
+    QMAKE_TARGET_COMPANY   = "LISE group at FRIB/MSU"
+}
+
 
 SOURCES += \
     MainWindowPR.cpp \
     d_promtRad_GlobalSettings.cpp \
     d_promtRad_LocationFactors.cpp \
+    d_promtRad_MonitorLocations.cpp \
     d_promtRad_StopBoundaries.cpp \
     mainPR.cpp \
     o_promptRad_Detailed.cpp \
@@ -33,6 +43,7 @@ HEADERS += \
     MainWindowPR.h \
     d_promtRad_GlobalSettings.h \
     d_promtRad_LocationFactors.h \
+    d_promtRad_MonitorLocations.h \
     d_promtRad_StopBoundaries.h \
     o_promptRad_Detailed.h \
     o_promptRad_LocationFactorsModel.h \
