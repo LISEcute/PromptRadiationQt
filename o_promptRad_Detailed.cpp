@@ -45,9 +45,6 @@ static const StopBoundaryTable kDefaultStopLocationBoundaries = {{
     -310.0, -170.0, -100.0, 100.0, 170.0, 310.0
 }};
 
-static LocationFactorTable gLocationFactors = kDefaultLocationFactors;
-static StopBoundaryTable gStopLocationBoundaries = kDefaultStopLocationBoundaries;
-
 static const GlobalPromptRadiationSettings kDefaultGlobalSettings = {
     1.2e-7, // Scale Model Factor
     1.0,   // New Shielding Factor
@@ -55,112 +52,11 @@ static const GlobalPromptRadiationSettings kDefaultGlobalSettings = {
     0.35,  // Fence
     4.0,   // Occupancy
     10.0,  // Light Z yield factor
-    "DB0", // Block name to calculate
+    "BTS02", // Block name to calculate
     1.0e6  // Rate cutoff [pps]
 };
 
-static GlobalPromptRadiationSettings gGlobalSettings = kDefaultGlobalSettings;
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-const GlobalPromptRadiationSettings& defaultGlobalSettings()
-{
-    return kDefaultGlobalSettings;
-}
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-const GlobalPromptRadiationSettings& globalSettings()
-{
-    return gGlobalSettings;
-}
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-bool areGlobalSettingsValid(const GlobalPromptRadiationSettings& settings)
-{
-    return std::isfinite(settings.scaleModelFactor)
-        && std::isfinite(settings.newShieldingFactor)
-        && std::isfinite(settings.insideOutsideFactor)
-        && std::isfinite(settings.fenceFactor)
-        && std::isfinite(settings.occupancyFactor)
-        && std::isfinite(settings.lightZYieldFactor)
-        && std::isfinite(settings.rateCutoffPps)
-        && std::any_of(settings.blockNameToCalculate.begin(),
-                       settings.blockNameToCalculate.end(),
-                       [](unsigned char ch) { return !std::isspace(ch); });
-}
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-void setGlobalSettings(const GlobalPromptRadiationSettings& settings)
-{
-    gGlobalSettings = areGlobalSettingsValid(settings) ? settings : kDefaultGlobalSettings;
-}
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-void resetGlobalSettingsToDefaults()
-{
-    gGlobalSettings = kDefaultGlobalSettings;
-}
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-const LocationFactorTable& defaultLocationFactors()
-{
-    return kDefaultLocationFactors;
-}
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-const LocationFactorTable& locationFactors()
-{
-    return gLocationFactors;
-}
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-void setLocationFactors(const LocationFactorTable& factors)
-{
-    gLocationFactors = factors;
-}
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-void resetLocationFactorsToDefaults()
-{
-    gLocationFactors = kDefaultLocationFactors;
-}
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-const StopBoundaryTable& defaultStopLocationBoundaries()
-{
-    return kDefaultStopLocationBoundaries;
-}
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-const StopBoundaryTable& stopLocationBoundaries()
-{
-    return gStopLocationBoundaries;
-}
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-bool areStopLocationBoundariesValid(const StopBoundaryTable& boundaries)
-{
-    for (int i = 1; i < kStopBoundaryCount; ++i) {
-        if (!std::isfinite(boundaries[i - 1]) || !std::isfinite(boundaries[i]) ||
-            boundaries[i - 1] >= boundaries[i]) {
-            return false;
-        }
-    }
-    return true;
-}
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-void setStopLocationBoundaries(const StopBoundaryTable& boundaries)
-{
-    gStopLocationBoundaries = areStopLocationBoundariesValid(boundaries)
-                              ? boundaries
-                              : kDefaultStopLocationBoundaries;
-}
-//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-
-void resetStopLocationBoundariesToDefaults()
-{
-    gStopLocationBoundaries = kDefaultStopLocationBoundaries;
-}
+static TPromptRadiationConfig gActiveConfig;
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 static std::string lowerAscii(std::string s)
@@ -183,6 +79,168 @@ static std::string trimAscii(const std::string& s)
         --last;
     }
     return s.substr(first, last - first);
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+static bool locationFactorsAreFinite(const LocationFactorTable& factors)
+{
+    for (const auto& row : factors) {
+        for (double value : row) {
+            if (!std::isfinite(value)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+TPromptRadiationConfig::TPromptRadiationConfig()
+    : globalSettings(kDefaultGlobalSettings),
+      locationFactors(kDefaultLocationFactors),
+      stopBoundaries(kDefaultStopLocationBoundaries)
+{
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+TPromptRadiationConfig TPromptRadiationConfig::defaultConfig()
+{
+    return TPromptRadiationConfig();
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+void TPromptRadiationConfig::resetToDefaults()
+{
+    globalSettings = kDefaultGlobalSettings;
+    locationFactors = kDefaultLocationFactors;
+    stopBoundaries = kDefaultStopLocationBoundaries;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+bool TPromptRadiationConfig::isValid() const
+{
+    return areGlobalSettingsValid(globalSettings)
+        && areStopLocationBoundariesValid(stopBoundaries)
+        && locationFactorsAreFinite(locationFactors);
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+const TPromptRadiationConfig& activePromptRadiationConfig()
+{
+    return gActiveConfig;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+void setActivePromptRadiationConfig(const TPromptRadiationConfig& config)
+{
+    gActiveConfig = config.isValid() ? config : TPromptRadiationConfig::defaultConfig();
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+void resetActivePromptRadiationConfigToDefaults()
+{
+    gActiveConfig.resetToDefaults();
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+const GlobalPromptRadiationSettings& defaultGlobalSettings()
+{
+    return kDefaultGlobalSettings;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+const GlobalPromptRadiationSettings& globalSettings()
+{
+    return gActiveConfig.globalSettings;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+bool areGlobalSettingsValid(const GlobalPromptRadiationSettings& settings)
+{
+    return std::isfinite(settings.scaleModelFactor)
+        && std::isfinite(settings.newShieldingFactor)
+        && std::isfinite(settings.insideOutsideFactor)
+        && std::isfinite(settings.fenceFactor)
+        && std::isfinite(settings.occupancyFactor)
+        && std::isfinite(settings.lightZYieldFactor)
+        && std::isfinite(settings.rateCutoffPps)
+        && std::any_of(settings.blockNameToCalculate.begin(),
+                       settings.blockNameToCalculate.end(),
+                       [](unsigned char ch) { return !std::isspace(ch); });
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+void setGlobalSettings(const GlobalPromptRadiationSettings& settings)
+{
+    gActiveConfig.globalSettings = areGlobalSettingsValid(settings) ? settings : kDefaultGlobalSettings;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+void resetGlobalSettingsToDefaults()
+{
+    gActiveConfig.globalSettings = kDefaultGlobalSettings;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+const LocationFactorTable& defaultLocationFactors()
+{
+    return kDefaultLocationFactors;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+const LocationFactorTable& locationFactors()
+{
+    return gActiveConfig.locationFactors;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+void setLocationFactors(const LocationFactorTable& factors)
+{
+    gActiveConfig.locationFactors = locationFactorsAreFinite(factors) ? factors : kDefaultLocationFactors;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+void resetLocationFactorsToDefaults()
+{
+    gActiveConfig.locationFactors = kDefaultLocationFactors;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+const StopBoundaryTable& defaultStopLocationBoundaries()
+{
+    return kDefaultStopLocationBoundaries;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+const StopBoundaryTable& stopLocationBoundaries()
+{
+    return gActiveConfig.stopBoundaries;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+bool areStopLocationBoundariesValid(const StopBoundaryTable& boundaries)
+{
+    for (int i = 1; i < kStopBoundaryCount; ++i) {
+        if (!std::isfinite(boundaries[i - 1]) || !std::isfinite(boundaries[i]) ||
+            boundaries[i - 1] >= boundaries[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+void setStopLocationBoundaries(const StopBoundaryTable& boundaries)
+{
+    gActiveConfig.stopBoundaries = areStopLocationBoundariesValid(boundaries)
+                                 ? boundaries
+                                 : kDefaultStopLocationBoundaries;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+void resetStopLocationBoundariesToDefaults()
+{
+    gActiveConfig.stopBoundaries = kDefaultStopLocationBoundaries;
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
@@ -210,7 +268,7 @@ double scaleFactorFromTemplate(int A, int Z, double energyMeVu)
 
 StopLocation locationFromDb0xExcel(double db0xMm, bool hasDb0x)
 {
-    return locationFromDb0xExcel(db0xMm, hasDb0x, gStopLocationBoundaries);
+    return locationFromDb0xExcel(db0xMm, hasDb0x, gActiveConfig.stopBoundaries);
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
@@ -263,9 +321,10 @@ bool stopLocationFromString(const std::string& text, StopLocation& loc)
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-bool findDb0xByFragment(const std::string& fragment,
-                        const std::vector<TemplatePosition>& positions,
-                        double& db0xMm)
+bool findDb0PositionByFragment(const std::string& fragment,
+                               const std::vector<TemplatePosition>& positions,
+                               double& db0xMm,
+                               double& sigmaXmm)
 {
     const std::string key = lowerAscii(trimAscii(fragment));
     if (key.empty()) {
@@ -278,10 +337,20 @@ bool findDb0xByFragment(const std::string& fragment,
         const std::string name = lowerAscii(p.fragment);
         if (name.find(key) != std::string::npos) {
             db0xMm = p.db0xMm;
+            sigmaXmm = p.sigmaXmm;
             return true;
         }
     }
     return false;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+bool findDb0xByFragment(const std::string& fragment,
+                        const std::vector<TemplatePosition>& positions,
+                        double& db0xMm)
+{
+    double sigmaXmm = 0.0;
+    return findDb0PositionByFragment(fragment, positions, db0xMm, sigmaXmm);
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
@@ -312,28 +381,71 @@ double doseRateMremPerHour(double ratePps,
                            StopLocation location,
                            int monitorIndex)
 {
-    return doseRateMremPerHour(ratePps, scale, location, monitorIndex, gLocationFactors);
+    return doseRateMremPerHour(ratePps, scale, location, monitorIndex, gActiveConfig.locationFactors);
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+TPromptRadiationCalculator::TPromptRadiationCalculator(const TPromptRadiationConfig& config)
+    : m_config(config)
+{
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+const TPromptRadiationConfig& TPromptRadiationCalculator::config() const
+{
+    return m_config;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+StopLocation TPromptRadiationCalculator::locationFromDb0x(double db0xMm, bool hasDb0x) const
+{
+    return locationFromDb0xExcel(db0xMm, hasDb0x, m_config.stopBoundaries);
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+double TPromptRadiationCalculator::doseRateMremPerHour(double ratePps,
+                                                       double scale,
+                                                       StopLocation location,
+                                                       int monitorIndex) const
+{
+    return lise_prompt_rad::doseRateMremPerHour(ratePps,
+                                                scale,
+                                                location,
+                                                monitorIndex,
+                                                m_config.locationFactors);
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 static DetailedDoseRow calculateOneLiseRow(const LiseDetailedInput& input,
-                                           const std::vector<TemplatePosition>& templatePositions)
+                                           const std::vector<TemplatePosition>& templatePositions,
+                                           const TPromptRadiationCalculator& calculator)
 {
     DetailedDoseRow out;
     out.input = input;
     out.scale = scaleFactorFromTemplate(input.A, input.Z, input.energyMeVu);
 
-    out.hasDb0x = findDb0xByFragment(input.fragment, templatePositions, out.db0xMm);
-    out.location = locationFromDb0xExcel(out.db0xMm, out.hasDb0x);
+    out.hasDb0x = input.hasDb0x;
+    out.db0xMm = input.db0xMm;
+    out.sigmaXmm = input.sigmaXmm;
+
+    if (!out.hasDb0x) {
+        out.hasDb0x = findDb0PositionByFragment(input.fragment,
+                                                templatePositions,
+                                                out.db0xMm,
+                                                out.sigmaXmm);
+    }
+
+    out.location = calculator.locationFromDb0x(out.db0xMm, out.hasDb0x);
 
     for (int i = 0; i < kMonitorCount; ++i) {
-        out.doseMremPerHr[i] = doseRateMremPerHour(input.ratePps, out.scale, out.location, i);
+        out.doseMremPerHr[i] = calculator.doseRateMremPerHour(input.ratePps, out.scale, out.location, i);
     }
     return out;
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-static DetailedDoseRow calculateOneLowIonRow(const LowIonInput& input)
+static DetailedDoseRow calculateOneLowIonRow(const LowIonInput& input,
+                                             const TPromptRadiationCalculator& calculator)
 {
     LiseDetailedInput row;
     row.fragment = input.name;
@@ -348,20 +460,21 @@ static DetailedDoseRow calculateOneLowIonRow(const LowIonInput& input)
     out.scale = scaleFactorFromTemplate(input.A, input.Z, input.energyMeVu);
     out.hasDb0x = false;
     out.db0xMm = 0.0;
+    out.sigmaXmm = 0.0;
     out.location = input.location;
 
     for (int i = 0; i < kMonitorCount; ++i) {
-        out.doseMremPerHr[i] = doseRateMremPerHour(input.ratePps, out.scale, out.location, i);
+        out.doseMremPerHr[i] = calculator.doseRateMremPerHour(input.ratePps, out.scale, out.location, i);
     }
     return out;
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-DetailedDoseResult calculateDetailedTemplate(
+DetailedDoseResult TPromptRadiationCalculator::calculate(
     const std::vector<LiseDetailedInput>& liseRows,
     const std::vector<TemplatePosition>& templatePositions,
     const std::vector<LowIonInput>& lowIons,
-    double minRatePps)
+    double minRatePps) const
 {
     DetailedDoseResult result;
     result.totalsMremPerHr.fill(0.0);
@@ -371,7 +484,7 @@ DetailedDoseResult calculateDetailedTemplate(
             continue;
         }
 
-        DetailedDoseRow out = calculateOneLiseRow(input, templatePositions);
+        DetailedDoseRow out = calculateOneLiseRow(input, templatePositions, *this);
         result.rows.push_back(out);
 
         // Excel row 2 uses SUMIF(column, ">0").
@@ -383,7 +496,7 @@ DetailedDoseResult calculateDetailedTemplate(
     }
 
     for (const LowIonInput& input : lowIons) {
-        DetailedDoseRow out = calculateOneLowIonRow(input);
+        DetailedDoseRow out = calculateOneLowIonRow(input, *this);
         result.lowIonRows.push_back(out);
 
         for (int i = 0; i < kMonitorCount; ++i) {
@@ -394,6 +507,28 @@ DetailedDoseResult calculateDetailedTemplate(
     }
 
     return result;
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+DetailedDoseResult calculateDetailedTemplate(
+    const std::vector<LiseDetailedInput>& liseRows,
+    const std::vector<TemplatePosition>& templatePositions,
+    const std::vector<LowIonInput>& lowIons,
+    double minRatePps)
+{
+    return calculateDetailedTemplate(gActiveConfig, liseRows, templatePositions, lowIons, minRatePps);
+}
+//wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+DetailedDoseResult calculateDetailedTemplate(
+    const TPromptRadiationConfig& config,
+    const std::vector<LiseDetailedInput>& liseRows,
+    const std::vector<TemplatePosition>& templatePositions,
+    const std::vector<LowIonInput>& lowIons,
+    double minRatePps)
+{
+    const TPromptRadiationCalculator calculator(config);
+    return calculator.calculate(liseRows, templatePositions, lowIons, minRatePps);
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 

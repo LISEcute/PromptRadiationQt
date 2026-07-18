@@ -47,7 +47,6 @@ using LocationFactorTable = std::array<std::array<double, kLocationCount>, kMoni
 //   else     -> P2
 using StopBoundaryTable = std::array<double, kStopBoundaryCount>;
 
-
 struct GlobalPromptRadiationSettings {
     double scaleModelFactor = 1.2e-7;
     double newShieldingFactor = 1.0;
@@ -55,12 +54,104 @@ struct GlobalPromptRadiationSettings {
     double fenceFactor = 0.35;
     double occupancyFactor = 4.0;
     double lightZYieldFactor = 10.0;
-    std::string blockNameToCalculate = "DB0";
+    std::string blockNameToCalculate = "BTS02";
     double rateCutoffPps = 1.0e6;
 };
 
-// Editable global settings. They are stored in the same INI file as factors/boundaries.
-// They are not all used by the current small example yet, but are kept here for later LISE++ integration.
+// New integration-ready settings object.  LISE++ can own one instance of this class
+// and pass it directly to TPromptRadiationCalculator, avoiding hidden mutable globals.
+struct TPromptRadiationConfig {
+    GlobalPromptRadiationSettings globalSettings;
+    LocationFactorTable locationFactors;
+    StopBoundaryTable stopBoundaries;
+
+    TPromptRadiationConfig();
+
+    static TPromptRadiationConfig defaultConfig();
+
+    void resetToDefaults();
+    bool isValid() const;
+};
+
+struct LiseDetailedInput {
+    std::string fragment;    // Excel B: e.g. "28Mg"
+    int A = 0;               // Excel C
+    int Z = 0;               // Excel D
+    std::string mechanism;   // Excel E, e.g. "FA"; not used by formulas
+    double ratePps = 0.0;    // Excel F
+    double energyMeVu = 0.0; // Excel G
+
+    // Reserved for direct LISE++ integration.  The current text-file workflow does
+    // not fill these fields, but LISE++ can provide charge-state-resolved rows.
+    int qTarget = 0;
+    int qWedge = 0;
+    bool hasDb0x = false;
+    double db0xMm = 0.0;
+    double sigmaXmm = 0.0;
+};
+
+struct TemplatePosition {
+    std::string fragment; // TemplatePositions column B
+    double db0xMm = 0.0;  // TemplatePositions column C
+    double sigmaXmm = 0.0; // Reserved for direct LISE++ DB0 position results
+};
+
+// Manual low-ion block, corresponding to Template Detailed rows 9:13, columns Z:AT.
+// ratePps should already include the template's requested multiplier, e.g. H/He x10.
+struct LowIonInput {
+    std::string name;
+    int A = 0;
+    int Z = 0;
+    double ratePps = 0.0;
+    double energyMeVu = 0.0;
+    StopLocation location = StopLocation::P2;
+};
+
+struct DetailedDoseRow {
+    LiseDetailedInput input;
+    double scale = 0.0;     // Excel H
+    bool hasDb0x = false;   // Excel I found from TemplatePositions or direct LISE++ row
+    double db0xMm = 0.0;
+    double sigmaXmm = 0.0;  // Reserved for future partial-location analysis
+    StopLocation location = StopLocation::P2; // Excel J; defaults to P2 when DB0.x is missing
+    std::array<double, kMonitorCount> doseMremPerHr{}; // Excel K:X
+};
+
+struct DetailedDoseResult {
+    std::vector<DetailedDoseRow> rows;
+    std::vector<DetailedDoseRow> lowIonRows;
+    std::array<double, kMonitorCount> totalsMremPerHr{}; // Excel row 2, B:O
+};
+
+class TPromptRadiationCalculator {
+public:
+    explicit TPromptRadiationCalculator(const TPromptRadiationConfig& config);
+
+    const TPromptRadiationConfig& config() const;
+
+    StopLocation locationFromDb0x(double db0xMm, bool hasDb0x = true) const;
+    double doseRateMremPerHour(double ratePps,
+                               double scale,
+                               StopLocation location,
+                               int monitorIndex) const;
+
+    DetailedDoseResult calculate(
+        const std::vector<LiseDetailedInput>& liseRows,
+        const std::vector<TemplatePosition>& templatePositions,
+        const std::vector<LowIonInput>& lowIons = {},
+        double minRatePps = 0.0) const;
+
+private:
+    const TPromptRadiationConfig& m_config;
+};
+
+// Editable global settings.  These functions are kept for the current standalone
+// application and dialogs.  Internally they now operate on one active
+// TPromptRadiationConfig object, so LISE++ can move to explicit config ownership later.
+const TPromptRadiationConfig& activePromptRadiationConfig();
+void setActivePromptRadiationConfig(const TPromptRadiationConfig& config);
+void resetActivePromptRadiationConfigToDefaults();
+
 const GlobalPromptRadiationSettings& defaultGlobalSettings();
 const GlobalPromptRadiationSettings& globalSettings();
 bool areGlobalSettingsValid(const GlobalPromptRadiationSettings& settings);
@@ -82,46 +173,6 @@ const StopBoundaryTable& stopLocationBoundaries();
 bool areStopLocationBoundariesValid(const StopBoundaryTable& boundaries);
 void setStopLocationBoundaries(const StopBoundaryTable& boundaries);
 void resetStopLocationBoundariesToDefaults();
-
-struct LiseDetailedInput {
-    std::string fragment;    // Excel B: e.g. "28Mg"
-    int A = 0;               // Excel C
-    int Z = 0;               // Excel D
-    std::string mechanism;   // Excel E, e.g. "FA"; not used by formulas
-    double ratePps = 0.0;    // Excel F
-    double energyMeVu = 0.0; // Excel G
-};
-
-struct TemplatePosition {
-    std::string fragment; // TemplatePositions column B
-    double db0xMm = 0.0;  // TemplatePositions column C
-};
-
-// Manual low-ion block, corresponding to Template Detailed rows 9:13, columns Z:AT.
-// ratePps should already include the template's requested multiplier, e.g. H/He x10.
-struct LowIonInput {
-    std::string name;
-    int A = 0;
-    int Z = 0;
-    double ratePps = 0.0;
-    double energyMeVu = 0.0;
-    StopLocation location = StopLocation::P2;
-};
-
-struct DetailedDoseRow {
-    LiseDetailedInput input;
-    double scale = 0.0;     // Excel H
-    bool hasDb0x = false;   // Excel I found from TemplatePositions
-    double db0xMm = 0.0;
-    StopLocation location = StopLocation::P2; // Excel J; defaults to P2 when DB0.x is missing
-    std::array<double, kMonitorCount> doseMremPerHr{}; // Excel K:X
-};
-
-struct DetailedDoseResult {
-    std::vector<DetailedDoseRow> rows;
-    std::vector<DetailedDoseRow> lowIonRows;
-    std::array<double, kMonitorCount> totalsMremPerHr{}; // Excel row 2, B:O
-};
 
 // Excel H formula, preserving the template exponents 1.7 and 0.333.
 // Returns 0 when A, Z, or energy is invalid, matching blank/zero contribution in Excel.
@@ -145,6 +196,12 @@ bool findDb0xByFragment(const std::string& fragment,
                         const std::vector<TemplatePosition>& positions,
                         double& db0xMm);
 
+// Direct LISE++ integration helper: locate DB0.x and sigma(x) when available.
+bool findDb0PositionByFragment(const std::string& fragment,
+                               const std::vector<TemplatePosition>& positions,
+                               double& db0xMm,
+                               double& sigmaXmm);
+
 // Dose formula for each monitor column:
 //   dose = ratePps / 1e8 * scale * LocationFactor[monitor][location]
 double doseRateMremPerHour(double ratePps,
@@ -162,6 +219,14 @@ double doseRateMremPerHour(double ratePps,
 // Main calculation for the "Template Detailed" sheet.
 // minRatePps is optional; use 0 to reproduce the spreadsheet exactly.
 DetailedDoseResult calculateDetailedTemplate(
+    const std::vector<LiseDetailedInput>& liseRows,
+    const std::vector<TemplatePosition>& templatePositions,
+    const std::vector<LowIonInput>& lowIons = {},
+    double minRatePps = 0.0);
+
+// Same calculation with an explicitly supplied config object for future LISE++ integration.
+DetailedDoseResult calculateDetailedTemplate(
+    const TPromptRadiationConfig& config,
     const std::vector<LiseDetailedInput>& liseRows,
     const std::vector<TemplatePosition>& templatePositions,
     const std::vector<LowIonInput>& lowIons = {},

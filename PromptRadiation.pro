@@ -18,8 +18,8 @@ win32-msvc {
 
 DEFINES += PROMPT_RADIATION_SOURCE_DIR=\\\"$$PWD\\\"
 
-win32:VERSION = 1.2.0.0 # major.minor.patch.build
-else:VERSION  = 1.2.0   # major.minor.patch
+win32:VERSION = 1.3.0.0 # major.minor.patch.build
+else:VERSION  = 1.3.0   # major.minor.patch
 VERSION_STR = $$section(VERSION, ., 0, 2)
 
 win32 {

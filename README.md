@@ -202,3 +202,13 @@ The Qt resource file is `PromptRadiationResources.qrc`. Dialog buttons use the r
 
 The menu action **Prompt radiation: run small example** uses `Icons/trans.gif`.
 The **Quit** action uses `Icons/quit.png`, copied from the closest available red-X/cancel icon in `Icons.zip`.
+
+## LISE++ integration preparation note
+
+The calculation core has been refactored so the mutable prompt-radiation state is grouped in
+`lise_prompt_rad::TPromptRadiationConfig` and the dose calculation can be run through
+`lise_prompt_rad::TPromptRadiationCalculator`.  The current standalone GUI still keeps the
+same behavior and uses the active/default configuration for compatibility, but future LISE++
+integration can own a separate `TPromptRadiationConfig` object and pass LISE++ internal yield,
+energy, charge-state, DB0.x, and sigma(x) results directly to the calculator without relying on
+text files or hidden global variables.
