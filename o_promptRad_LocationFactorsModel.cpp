@@ -34,7 +34,7 @@ QVariant LocationFactorsModel::data(const QModelIndex& index, int role) const
     const double value = m_factors[index.row()][index.column()];
 
     if (role == Qt::DisplayRole || role == Qt::EditRole) {
-        return QLocale::c().toString(value, 'g', 12);
+        return QLocale::c().toString(value, 'g', 6);
     }
 
     if (role == Qt::TextAlignmentRole) {

@@ -21,6 +21,7 @@
 #include <QStringList>
 #include <QTextEdit>
 #include <QTextStream>
+#include <QScrollBar>
 
 #include <algorithm>
 #include <vector>
@@ -286,12 +287,14 @@ void MainWindow::runSmallExample()
 
     m_log->append(tr("\nSmall prompt-radiation example, including default low-ion rows:"));
     m_log->append(QString::fromLatin1("  Rate cutoff = %1 pps")
-                  .arg(globalSettings().rateCutoffPps, 0, 'g', 8));
+                  .arg(globalSettings().rateCutoffPps, 0, 'e', 2));
     for (int i = 0; i < kMonitorCount; ++i) {
         m_log->append(QString::fromLatin1("  %1 : %2 mrem/h")
                       .arg(QString::fromLatin1(kMonitorNames[i]), -7)
                       .arg(result.totalsMremPerHr[i], 0, 'g', 8));
     }
+
+    m_log->verticalScrollBar()->setValue(m_log->verticalScrollBar()->maximum());
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
@@ -326,7 +329,7 @@ void MainWindow::readInputFilesAndRun()
         globalSettings().rateCutoffPps);
 
     m_log->append(QString::fromLatin1("  Rate cutoff    : %1 pps")
-                  .arg(globalSettings().rateCutoffPps, 0, 'g', 8));
+                  .arg(globalSettings().rateCutoffPps, 0, 'e', 2));
     m_log->append(QString::fromLatin1("  Rows after cutoff: %1 detailed + %2 low-ion")
                   .arg(static_cast<int>(result.rows.size()))
                   .arg(static_cast<int>(result.lowIonRows.size())));
@@ -334,6 +337,8 @@ void MainWindow::readInputFilesAndRun()
     m_log->append(tr("\nMonitor totals:"));
     prompt_rad_ui::appendMonitorTotals(m_log, result);
     prompt_rad_ui::appendTopContributors(m_log, result);
+
+    m_log->verticalScrollBar()->setValue(m_log->verticalScrollBar()->maximum());
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
@@ -447,7 +452,7 @@ void MainWindow::printGlobalSettingsSummary()
     m_log->append(QString::fromLatin1("  Occupancy            = %1").arg(g.occupancyFactor, 0, 'g', 12));
     m_log->append(QString::fromLatin1("  Light Z yield factor = %1").arg(g.lightZYieldFactor, 0, 'g', 12));
     m_log->append(QString::fromLatin1("  Block name           = %1").arg(QString::fromStdString(g.blockNameToCalculate)));
-    m_log->append(QString::fromLatin1("  Rate cutoff          = %1 pps").arg(g.rateCutoffPps, 0, 'g', 12));
+    m_log->append(QString::fromLatin1("  Rate cutoff          = %1 pps").arg(g.rateCutoffPps, 0, 'e', 2));
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
@@ -459,7 +464,7 @@ void MainWindow::printLocationFactorSummary()
     for (int c = 0; c < lise_prompt_rad::kLocationCount; ++c) {
         m_log->append(QString::fromLatin1("  %1 = %2")
                       .arg(QString::fromLatin1(lise_prompt_rad::kLocationNames[c]), -5)
-                      .arg(f[0][c], 0, 'g', 12));
+                      .arg(f[0][c], 0, 'g', 9));
     }
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww

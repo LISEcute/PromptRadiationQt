@@ -12,6 +12,7 @@
 #include <QTableWidgetItem>
 #include <QVBoxLayout>
 
+
 #include <cmath>
 
 namespace {
@@ -70,10 +71,8 @@ const char* settingDescription(int row)
 }
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
-QString numberText(double value)
-{
-    return QLocale::c().toString(value, 'g', 12);
-}
+QString numberText(double value) {    return QLocale::c().toString(value, 'g', 8);}
+QString numberTextE(double value){    return QLocale::c().toString(value, 'e', 2);}
 //wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 bool readDoubleCell(const QTableWidget* table,
@@ -138,6 +137,19 @@ T_PradiationGlobalSettingsDlg::T_PradiationGlobalSettingsDlg(QWidget* parent)
 
     fillTable();
 
+    m_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    m_table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
+    m_table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+
+    m_table->setColumnWidth(1, 95);   // Value column, increase if needed
+
+    m_table->setStyleSheet(QStringLiteral(
+        "QTableWidget::item {"
+        "  padding-left: 6px;"
+        "  padding-right: 6px;"
+        "}"
+    ));
+
     connect(m_buttons, &QDialogButtonBox::accepted, this, &T_PradiationGlobalSettingsDlg::accept);
     connect(m_buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
     connect(resetButton, &QPushButton::clicked, this, &T_PradiationGlobalSettingsDlg::resetToDefaults);
@@ -175,15 +187,14 @@ void T_PradiationGlobalSettingsDlg::fillTable()
         case RowOccupancy:            value = numberText(m_settings.occupancyFactor); break;
         case RowLightZYieldFactor:    value = numberText(m_settings.lightZYieldFactor); break;
         case RowBlockNameToCalculate: value = QString::fromStdString(m_settings.blockNameToCalculate); break;
-        case RowRateCutoff:           value = numberText(m_settings.rateCutoffPps); break;
+        case RowRateCutoff:           value = numberTextE(m_settings.rateCutoffPps); break;
         default: break;
         }
 
         auto* valueItem = new QTableWidgetItem(value);
-        if (r != RowBlockNameToCalculate) {
-            valueItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        }
+        valueItem->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         m_table->setItem(r, 1, valueItem);
+
 
         auto* commentItem = new QTableWidgetItem(QString::fromLatin1(settingDescription(r)));
         commentItem->setFlags(commentItem->flags() & ~Qt::ItemIsEditable);

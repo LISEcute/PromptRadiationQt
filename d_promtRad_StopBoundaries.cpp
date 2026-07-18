@@ -38,7 +38,7 @@ T_PradiationStopBoundariesDlg::T_PradiationStopBoundariesDlg(QWidget* parent)
 {
     setWindowTitle(tr("Prompt Radiation DB0.x Stopping Boundaries"));
     setWindowIcon(QIcon(QStringLiteral(":/Icons/lisepp_small.png")));
-    resize(680, 360);
+    resize(480, 360);
 
     auto* note = new QLabel(
         tr("These limits are applied in this exact order to assign the stopping location from DB0.x. "
@@ -101,7 +101,7 @@ void T_PradiationStopBoundariesDlg::fillTable()
         m_table->setItem(r, 0, ruleItem);
 
         auto* limitItem = new QTableWidgetItem(QLocale::c().toString(m_boundaries[r], 'g', 12));
-        limitItem->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        limitItem->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         m_table->setItem(r, 1, limitItem);
 
         auto* locationItem = new QTableWidgetItem(QString::fromLatin1(resultLocationNameForBoundaryRow(r)));
